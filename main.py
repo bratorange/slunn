@@ -10,9 +10,9 @@ from dataset import Dataset
 # Variables
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_path', type=str, default='mnist')
-parser.add_argument('--lr', type=float, default=.01)
+parser.add_argument('--lr', type=float, default=.001)
 parser.add_argument('--epochs', type=int, default=10)
-parser.add_argument('--batch_size', type=int, default=1)
+parser.add_argument('--batch_size', type=int, default=4)
 args = parser.parse_args()
 
 
@@ -21,12 +21,6 @@ model = MNistClassifier()
 model.randomize()
 loss = MSE()
 data = Dataset(args.dataset_path, args.batch_size)
-
-# create a linear function as training data
-# images = np.linspace(0, 3, 1000).reshape(-1, 1)
-# labels = np.sin(images)
-# labels = labels + np.random.normal(0, .01, labels.shape)
-
 
 
 losses = []
@@ -49,12 +43,23 @@ for epoch in range(args.epochs):
               )
         losses.append(loss_value)
 
-print(model.get_parameters())
+# evaluate the model
+data_test = Dataset(args.dataset_path, args.batch_size, True)
+pred_test = model.forward(data_test[:][0])
+loss_value = loss.forward(pred_test, data_test[:][1])
+loss_value = loss_value.mean()
+print(f"Evaluation Loss: {loss_value:.6f}")
 
+# Plot example predictions
 plt.figure(dpi=200)
-plt.plot(*data[:], 'ro', markersize=1)
-plt.plot(data[:][0], model.forward(data[:][0]), 'bo', markersize=1)
+plt.rcParams.update({'font.size': 8})  # Set the font size to a smaller value
+for i in range(18):
+    plt.subplot(3, 6, i + 1)
+    plt.axis('off')
+    plt.imshow(data_test[i][0].reshape(28, 28), cmap='gray')
+    plt.title(f"Pred: {np.argmax(pred_test[i])} ( {np.argmax(data_test[i][1])} )")
 plt.show()
+
 
 # Plot the loss
 plt.plot(np.log(losses))

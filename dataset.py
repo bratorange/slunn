@@ -5,12 +5,12 @@ import settings
 
 
 class Dataset:
-    def __init__(self, path, batch_size):
+    def __init__(self, path, batch_size, evaluation=False):
         self.path = path
         self.batch_size = batch_size
         # Load the data
         mndata = MNIST(path)
-        images, enc_labels = mndata.load_training()
+        images, enc_labels = mndata.load_training() if not eval else mndata.load_testing()
         images = np.array(images, dtype=settings.default_dtype) / 255.0
         images = (images - np.mean(images, axis=1, keepdims=True)) / np.std(images, axis=1, keepdims=True)
 
@@ -28,15 +28,15 @@ class Dataset:
         self.images = images
         self.labels = one_hot_labels
 
-        self.images = np.linspace(0, 3, 1000).reshape(-1, 1)
-        self.labels = np.sin(self.images)
-        self.labels = self.labels + np.random.normal(0, .01, self.labels.shape)
+        #self.images = np.linspace(0, 3, 1000).reshape(-1, 1)
+        #self.labels = np.sin(self.images)
+        #self.labels = self.labels + np.random.normal(0, .01, self.labels.shape)
 
-        # shuffle
-        indices = np.arange(len(self.images))
-        np.random.shuffle(indices)
-        self.images = self.images[indices]
-        self.labels = self.labels[indices]
+        ## shuffle
+        #indices = np.arange(len(self.images))
+        #np.random.shuffle(indices)
+        #self.images = self.images[indices]
+        #self.labels = self.labels[indices]
 
     def __getitem__(self, item):
         return self.images[item], self.labels[item]

@@ -7,9 +7,8 @@ from activations import ReLU, Softmax
 class MNistClassifier(Module):
     def __init__(self):
         self.layers = [
-            LinearLayer(1, 10),
-            ReLU(),
-            LinearLayer(10, 1),
+            LinearLayer(784, 10),
+
             #LinearLayer(256, 32),
             #ReLU(),
             #LinearLayer(32, 10),
