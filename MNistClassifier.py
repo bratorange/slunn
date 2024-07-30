@@ -8,8 +8,8 @@ class MNistClassifier(Module):
     def __init__(self):
         self.layers = [
             LinearLayer(784, 10),
-
-            #LinearLayer(256, 32),
+            # ReLU(),
+            # LinearLayer(256, 10),
             #ReLU(),
             #LinearLayer(32, 10),
             # Softmax(),

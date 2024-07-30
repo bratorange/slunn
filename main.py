@@ -10,27 +10,36 @@ from dataset import Dataset
 # Variables
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_path', type=str, default='MNIST')
-parser.add_argument('--initial_lr', type=float, default=.005)
-parser.add_argument('--lr_decay', type=float, default=.3)
-parser.add_argument('--epochs', type=int, default=10)
-parser.add_argument('--batch_size', type=int, default=4)
+parser.add_argument('--initial_lr', type=float, default=.003)
+parser.add_argument('--lr_decay', type=float, default=.1)
+parser.add_argument('--epochs', type=int, default=40)
+parser.add_argument('--batch_size', type=int, default=2)
 args = parser.parse_args()
-
 
 # init the model
 model = MNistClassifier()
 model.randomize()
 loss = MSE()
-data = Dataset(args.dataset_path, args.batch_size)
+data_train = Dataset(args.dataset_path, args.batch_size)
+data_test = Dataset(args.dataset_path, args.batch_size, True)
+
+
+def evaluate():
+    global pred_test, error
+    pred_test = model.forward(data_test[:][0])
+    error = 1 - np.mean(pred_test.argmax(axis=1) == data_test[:][1].argmax(axis=1))
+    return error
 
 
 losses = []
+error_rate = []
+t = 0
 # Train the model
 for epoch in range(args.epochs):
-    for iteration, (image, label) in enumerate(data):
+    for iteration, (image, label) in enumerate(data_train):
         # forward pass
         y = model.forward(image)
-        loss_value = loss.forward(y, label)
+        error = loss.forward(y, label)
 
         # backward pass
         gradient_y = loss.backward()
@@ -39,19 +48,20 @@ for epoch in range(args.epochs):
         lr = args.initial_lr * np.exp(-args.lr_decay * epoch)
         model.optimize(lr)
 
-        print(f"Epoch: {epoch},"
-              f"Iteration: {iteration},"
-              f"Loss: {loss_value:.6f}"
-                f"Learning Rate: {lr:.6f}"
-              )
-        losses.append(loss_value)
+        if iteration % 1000 == 0:
+            print(f"Epoch: {epoch},"
+                  f"Iteration: {iteration}, "
+                  f"Loss: {error:.6f}, "
+                  f"Learning Rate: {lr:.6f}, "
+                  )
+        losses.append((t, error,))
+        t += 1
+    error_rate.append((t, evaluate(),))
+    print(f"Finished epoch: {epoch}, Evaluation Loss: {error_rate[-1][1]:.6f}")
 
 # evaluate the model
-data_test = Dataset(args.dataset_path, args.batch_size, True)
 pred_test = model.forward(data_test[:][0])
-loss_value = loss.forward(pred_test, data_test[:][1])
-loss_value = loss_value.mean()
-print(f"Evaluation Loss: {loss_value:.6f}")
+print(f"Evaluation Loss: {evaluate():.6f}")
 
 # Plot example predictions
 plt.figure(dpi=200)
@@ -63,7 +73,10 @@ for i in range(18):
     plt.title(f"Pred: {np.argmax(pred_test[i])} ( {np.argmax(data_test[i][1])} )")
 plt.show()
 
-
 # Plot the loss
-plt.plot(np.log(losses))
+losses = np.array(losses).transpose()
+error_rate = np.array(error_rate).transpose()
+plt.plot(losses[0], np.log(losses[1]), '-', label='Training Loss', markersize=.5)
+plt.plot(error_rate[0], np.log(error_rate[1]), 'o-', label='Evaluation Loss', markersize=1)
+plt.legend()
 plt.show()

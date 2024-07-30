@@ -13,8 +13,7 @@ class ReLU(Module):
 
     def backward(self, gradient_y):
         assert self.x is not None
-        y = np.where(self.x < 0., 0., 1.) * gradient_y
-        return y
+        return np.where(self.x < 0., 0., 1.) * gradient_y
 
 
 class Softmax(Module):
