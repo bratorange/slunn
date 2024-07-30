@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Errors import MSE
+from Errors import MSE, CrossEntropyLoss
 from MNistClassifier import MNistClassifier
 from dataset import Dataset
 
@@ -19,7 +19,7 @@ args = parser.parse_args()
 # init the model
 model = MNistClassifier()
 model.randomize()
-loss = MSE()
+loss = CrossEntropyLoss()
 data_train = Dataset(args.dataset_path, args.batch_size)
 data_test = Dataset(args.dataset_path, args.batch_size, True)
 
@@ -57,7 +57,7 @@ for epoch in range(args.epochs):
         losses.append((t, error,))
         t += 1
     error_rate.append((t, evaluate(),))
-    print(f"Finished epoch: {epoch}, Evaluation Loss: {error_rate[-1][1]:.6f}")
+    print(f"Finished epoch: {epoch}, Evaluation Loss: {error_rate[-1][1]:.6f}, Learning Rate: {lr:.6f}")
 
 # evaluate the model
 pred_test = model.forward(data_test[:][0])
