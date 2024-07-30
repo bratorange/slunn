@@ -1,17 +1,22 @@
 from LinearLayer import LinearLayer
 from Module import Module
-from activations import ReLU, Softmax
+from activations import ReLU
 
 
 # classify MNist digits: 28x28=784 input, 10 output
 class MNistClassifier(Module):
     def __init__(self):
         self.layers = [
-            LinearLayer(784, 256),
+            LinearLayer(784, 1568),
             ReLU(),
-            LinearLayer(256, 10),
+            LinearLayer(1568, 784),
             ReLU(),
-            #LinearLayer(32, 10),
+            LinearLayer(784, 392),
+            ReLU(),
+            LinearLayer(392, 196),
+            ReLU(),
+            LinearLayer(196, 10),
+            ReLU(),
         ]
 
     def set_parameters(self, dict):

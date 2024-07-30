@@ -28,7 +28,7 @@ class LinearLayer(Module):
 
     def randomize(self):
         fan_in = self.weights.shape[0]
-        std = np.sqrt(2.0 / fan_in)
+        std = np.sqrt(1.0 / fan_in)
 
         self.weights = np.random.normal(0, std, self.weights.shape)
         self.bias = np.full(self.bias.shape, fill_value=0., dtype=settings.default_dtype)

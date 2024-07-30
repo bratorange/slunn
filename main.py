@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Errors import MSE, CrossEntropyLoss
+from Errors import  CrossEntropyLoss
 from MNistClassifier import MNistClassifier
 from dataset import Dataset
 
@@ -12,8 +12,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_path', type=str, default='MNIST')
 parser.add_argument('--initial_lr', type=float, default=.02)
 parser.add_argument('--lr_decay', type=float, default=.05)
-parser.add_argument('--epochs', type=int, default=100)
-parser.add_argument('--batch_size', type=int, default=8)
+parser.add_argument('--epochs', type=int, default=40)
+parser.add_argument('--batch_size', type=int, default=64)
 args = parser.parse_args()
 
 # init the model
@@ -48,12 +48,12 @@ for epoch in range(args.epochs):
         model.backward(gradient_y)
         model.optimize(lr)
 
-        # if iteration % 10000 == 0:
-        #     print(f"Epoch: {epoch}, "
-        #           f"Iteration: {iteration}, "
-        #           f"Loss: {error:.6f}, "
-        #           f"Learning Rate: {lr:.6f}, "
-        #           )
+        if iteration % 100 == 0:
+            print(f"Epoch: {epoch}, "
+                  f"Iteration: {iteration}, "
+                  f"Loss: {error:.6f}, "
+                  f"Learning Rate: {lr:.6f}, "
+                  )
         losses.append((t, error,))
         t += 1
     error_rate.append((t, evaluate(),))
