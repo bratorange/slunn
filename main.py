@@ -10,10 +10,10 @@ from dataset import Dataset
 # Variables
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_path', type=str, default='MNIST')
-parser.add_argument('--initial_lr', type=float, default=.003)
-parser.add_argument('--lr_decay', type=float, default=.1)
-parser.add_argument('--epochs', type=int, default=40)
-parser.add_argument('--batch_size', type=int, default=2)
+parser.add_argument('--initial_lr', type=float, default=.02)
+parser.add_argument('--lr_decay', type=float, default=.05)
+parser.add_argument('--epochs', type=int, default=100)
+parser.add_argument('--batch_size', type=int, default=8)
 args = parser.parse_args()
 
 # init the model
@@ -36,6 +36,7 @@ error_rate = []
 t = 0
 # Train the model
 for epoch in range(args.epochs):
+    lr = args.initial_lr * np.exp(-args.lr_decay * epoch)
     for iteration, (image, label) in enumerate(data_train):
         # forward pass
         y = model.forward(image)
@@ -45,15 +46,14 @@ for epoch in range(args.epochs):
         gradient_y = loss.backward()
         gradient_y = gradient_y
         model.backward(gradient_y)
-        lr = args.initial_lr * np.exp(-args.lr_decay * epoch)
         model.optimize(lr)
 
-        if iteration % 1000 == 0:
-            print(f"Epoch: {epoch},"
-                  f"Iteration: {iteration}, "
-                  f"Loss: {error:.6f}, "
-                  f"Learning Rate: {lr:.6f}, "
-                  )
+        # if iteration % 10000 == 0:
+        #     print(f"Epoch: {epoch}, "
+        #           f"Iteration: {iteration}, "
+        #           f"Loss: {error:.6f}, "
+        #           f"Learning Rate: {lr:.6f}, "
+        #           )
         losses.append((t, error,))
         t += 1
     error_rate.append((t, evaluate(),))
@@ -61,7 +61,7 @@ for epoch in range(args.epochs):
 
 # evaluate the model
 pred_test = model.forward(data_test[:][0])
-print(f"Evaluation Loss: {evaluate():.6f}")
+print(f"Evaluation Error: {evaluate():.6f}")
 
 # Plot example predictions
 plt.figure(dpi=200)
@@ -76,7 +76,7 @@ plt.show()
 # Plot the loss
 losses = np.array(losses).transpose()
 error_rate = np.array(error_rate).transpose()
-plt.plot(losses[0], np.log(losses[1]), '-', label='Training Loss', markersize=.5)
-plt.plot(error_rate[0], np.log(error_rate[1]), 'o-', label='Evaluation Loss', markersize=1)
+# plt.plot(losses[0], np.log(losses[1]), '-', label='Training Loss', markersize=.5)
+plt.plot(error_rate[0], np.log(error_rate[1]), 'o-', label='Evaluation Error', markersize=1)
 plt.legend()
 plt.show()

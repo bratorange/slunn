@@ -7,12 +7,11 @@ from activations import ReLU, Softmax
 class MNistClassifier(Module):
     def __init__(self):
         self.layers = [
-            LinearLayer(784, 10),
-            # ReLU(),
-            # LinearLayer(256, 10),
-            #ReLU(),
+            LinearLayer(784, 256),
+            ReLU(),
+            LinearLayer(256, 10),
+            ReLU(),
             #LinearLayer(32, 10),
-            # Softmax(),
         ]
 
     def set_parameters(self, dict):

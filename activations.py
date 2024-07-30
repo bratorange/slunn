@@ -26,9 +26,21 @@ class Softmax(Module):
         return self.y
 
     def backward(self, gradient_y):
-        jacobian = np.diag(self.y) - np.outer(self.y, self.y)
+        # Ensure gradient_y is 2D: (batch_size, num_classes)
+        if gradient_y.ndim == 1:
+            gradient_y = gradient_y.reshape(1, -1)
 
-        # Compute gradient
-        gradient_x = np.dot(jacobian, gradient_y)
+        batch_size, num_classes = gradient_y.shape
+
+        # Initialize the output gradient
+        gradient_x = np.zeros_like(gradient_y)
+
+        for i in range(batch_size):
+            # Compute Jacobian for each sample
+            jacobian = np.diag(self.y[i]) - np.outer(self.y[i], self.y[i])
+
+            # Compute gradient for each sample
+            gradient_x[i] = np.dot(jacobian, gradient_y[i])
+
         self.y = None
         return gradient_x
