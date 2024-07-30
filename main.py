@@ -1,5 +1,6 @@
 import argparse
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 from Errors import MSE
@@ -9,8 +10,8 @@ from dataset import Dataset
 # Variables
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_path', type=str, default='mnist')
-parser.add_argument('--lr', type=float, default=.001)
-parser.add_argument('--epochs', type=int, default=500)
+parser.add_argument('--lr', type=float, default=.01)
+parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--batch_size', type=int, default=1)
 args = parser.parse_args()
 
@@ -52,9 +53,9 @@ print(model.get_parameters())
 
 plt.figure(dpi=200)
 plt.plot(*data[:], 'ro', markersize=1)
-plt.plot(data[:][0], model.forward(data[:][0]), 'b', linewidth=1)
+plt.plot(data[:][0], model.forward(data[:][0]), 'bo', markersize=1)
 plt.show()
 
 # Plot the loss
-plt.plot(losses)
+plt.plot(np.log(losses))
 plt.show()

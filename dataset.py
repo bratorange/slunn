@@ -32,6 +32,12 @@ class Dataset:
         self.labels = np.sin(self.images)
         self.labels = self.labels + np.random.normal(0, .01, self.labels.shape)
 
+        # shuffle
+        indices = np.arange(len(self.images))
+        np.random.shuffle(indices)
+        self.images = self.images[indices]
+        self.labels = self.labels[indices]
+
     def __getitem__(self, item):
         return self.images[item], self.labels[item]
 
