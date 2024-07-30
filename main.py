@@ -9,8 +9,9 @@ from dataset import Dataset
 
 # Variables
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset_path', type=str, default='mnist')
-parser.add_argument('--lr', type=float, default=.001)
+parser.add_argument('--dataset_path', type=str, default='MNIST')
+parser.add_argument('--initial_lr', type=float, default=.005)
+parser.add_argument('--lr_decay', type=float, default=.3)
 parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--batch_size', type=int, default=4)
 args = parser.parse_args()
@@ -35,11 +36,13 @@ for epoch in range(args.epochs):
         gradient_y = loss.backward()
         gradient_y = gradient_y
         model.backward(gradient_y)
-        model.optimize(args.lr)
+        lr = args.initial_lr * np.exp(-args.lr_decay * epoch)
+        model.optimize(lr)
 
         print(f"Epoch: {epoch},"
               f"Iteration: {iteration},"
               f"Loss: {loss_value:.6f}"
+                f"Learning Rate: {lr:.6f}"
               )
         losses.append(loss_value)
 
