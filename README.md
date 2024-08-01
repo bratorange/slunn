@@ -1,5 +1,5 @@
 # Sligthly underwhelming neural network
-This was a finger practice of implementing neural networks with simple backpropagation and gradient descent in numpy. Please take implementation with a grain of salt as many parts may not be optimal.
+This was a finger practice of implementing neural networks with simple backpropagation and gradient descent in numpy. Please take this implementation with a grain of salt, as many parts may not be optimal.
 
 ## Results
 I managed to get MNIST under 1% error with five layers.
