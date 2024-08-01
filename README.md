@@ -5,9 +5,11 @@ This was a finger practice of implementing neural networks with simple backpropa
 I managed to get MNIST under 1% error with 4 layers.
 
 ## Getting started
+
 ```
 $ git clone https://github.com/bratorange/slunn.git
 $ cd slunn
+# Download the MNIST dataset and extract it here as folder MNIST
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ python main.py
